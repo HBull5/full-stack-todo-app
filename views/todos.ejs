@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Todos</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .container {
+                max-width: 1100px;
+                padding: 1rem;
+                margin: 0 auto;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            ul {
+                list-style-type: none;
+                text-align: center;
+            }
+
+            ul li {
+                margin: 1rem 0;
+                cursor: pointer;
+            }
+
+            .complete {
+                text-decoration: line-through;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Todos</h1>
+            <ul>
+                <% for(const result of results) { %>
+                <li class="todo <%= result.complete ? 'complete' : '' %>" data-todoID="<%= result.todoID %>"><%= result.name %></li>
+                <% } %>
+            </ul>
+        </div>
+        <script>
+            const todos = document.querySelectorAll(".todo");
+
+            function ajaxRequest(id, status) {
+                let xhr = new XMLHttpRequest();
+                xhr.open("PUT", `http://localhost:5000/api/complete/${id}/${status}`);
+
+                xhr.send();
+            }
+
+            for (const todo of todos) {
+                todo.addEventListener("click", () => {
+                    todo.classList.toggle("complete");
+                    if (todo.classList.contains("complete")) {
+                        // has been marked through
+                        ajaxRequest(todo.getAttribute("data-todoID"), 1);
+                    } else {
+                        // not complete
+                        ajaxRequest(todo.getAttribute("data-todoID"), 0);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
